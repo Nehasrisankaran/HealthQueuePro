@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthQueue Pro - Hospital Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--success);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+        }
+
+        .logo span {
+            color: var(--success);
+        }
+
+        .time-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            margin-top: 30px;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .resource-category {
+            margin-bottom: 25px;
+        }
+
+        .resource-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: var(--light);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .resource-item:hover {
+            transform: translateX(5px);
+            background: #e0e7ff;
+        }
+
+        .resource-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .status-available {
+            background-color: var(--success);
+        }
+
+        .status-busy {
+            background-color: var(--warning);
+        }
+
+        .status-occupied {
+            background-color: var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .queue-card .card-icon {
+            background: var(--secondary);
+        }
+
+        .doctors-card .card-icon {
+            background: var(--success);
+        }
+
+        .beds-card .card-icon {
+            background: var(--warning);
+        }
+
+        .wait-card .card-icon {
+            background: var(--accent);
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .card-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Queue Section */
+        .queue-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .queue-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .queue-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .patient-id {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .priority-high {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .priority-medium {
+            color: var(--warning);
+            font-weight: 700;
+        }
+
+        .priority-low {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .status-waiting {
+            background: #ffeaa7;
+            color: #e17055;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-in-progress {
+            background: #a29bfe;
+            color: #6c5ce7;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status-completed {
+            background: #55efc4;
+            color: #00b894;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            background: var(--primary);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .queue-controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-hospital-alt"></i>
+                <div>
+                    <h1>Health<span>Queue</span> Pro</h1>
+                    <p>Hospital Queue & Resource Management System</p>
+                </div>
+            </div>
+            <div class="time-display">
+                <i class="far fa-clock"></i>
+                <span id="current-time">Loading...</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-layout">
+            <!-- Sidebar with Resources -->
+            <aside class="sidebar">
+                <h3><i class="fas fa-cubes"></i> Resource Status</h3>
+                
+                <div class="resource-category">
+                    <h4><i class="fas fa-user-md"></i> Doctors Available</h4>
+                    <div class="resource-item">
+                        <span>General Physicians</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Surgeons</span>
+                        <div class="resource-status status-busy"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Pediatricians</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Cardiologists</span>
+                        <div class="resource-status status-occupied"></div>
+                    </div>
+                </div>
+                
+                <div class="resource-category">
+                    <h4><i class="fas fa-procedures"></i> Facility Status</h4>
+                    <div class="resource-item">
+                        <span>ICU Beds</span>
+                        <div class="resource-status status-occupied"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>General Beds</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Operation Theaters</span>
+                        <div class="resource-status status-busy"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Emergency Rooms</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                </div>
+                
+                <div class="resource-category">
+                    <h4><i class="fas fa-vial"></i> Lab Equipment</h4>
+                    <div class="resource-item">
+                        <span>X-Ray Machines</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>MRI Scanners</span>
+                        <div class="resource-status status-busy"></div>
+                    </div>
+                    <div class="resource-item">
+                        <span>Blood Analyzers</span>
+                        <div class="resource-status status-available"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Dashboard Cards -->
+                <section class="dashboard-cards">
+                    <div class="card queue-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <span class="card-label">Current Queue</span>
+                        </div>
+                        <div class="card-value" id="queue-count">18</div>
+                        <p>Patients waiting for consultation</p>
+                    </div>
+                    
+                    <div class="card doctors-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <span class="card-label">Doctors Active</span>
+                        </div>
+                        <div class="card-value" id="doctors-count">12</div>
+                        <p>Out of 18 total doctors</p>
+                    </div>
+                    
+                    <div class="card beds-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-bed"></i>
+                            </div>
+                            <span class="card-label">Beds Available</span>
+                        </div>
+                        <div class="card-value" id="beds-count">24</div>
+                        <p>Out of 56 total beds</p>
+                    </div>
+                    
+                    <div class="card wait-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <span class="card-label">Avg. Wait Time</span>
+                        </div>
+                        <div class="card-value" id="wait-time">42</div>
+                        <p>Minutes for general consultation</p>
+                    </div>
+                </section>
+
+                <!-- Queue Management Section -->
+                <section class="queue-section">
+                    <div class="queue-controls">
+                        <h2><i class="fas fa-list-ol"></i> Patient Queue Management</h2>
+                        <div class="button-group">
+                            <button class="btn btn-primary" id="add-patient-btn">
+                                <i class="fas fa-user-plus"></i> Add Patient
+                            </button>
+                            <button class="btn btn-success" id="next-patient-btn">
+                                <i class="fas fa-forward"></i> Next Patient
+                            </button>
+                            <button class="btn btn-warning" id="update-resources-btn">
+                                <i class="fas fa-sync-alt"></i> Update Resources
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="queue-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Queue #</th>
+                                    <th>Patient ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Priority</th>
+                                    <th>Wait Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queue-table-body">
+                                <!-- Queue data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <h3>HealthQueue Pro</h3>
+                <p>Digital Solution for Hospital Queue & Resource Management</p>
+            </div>
+            <div>
+                <p><i class="fas fa-info-circle"></i> Real-time data updates every 30 seconds</p>
+                <p>Data securely stored locally in browser</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Patient Modal -->
+    <div class="modal" id="patient-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add New Patient to Queue</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <form id="patient-form">
+                <div class="form-group">
+                    <label for="patient-name">Patient Name</label>
+                    <input type="text" id="patient-name" class="form-control" placeholder="Enter patient name" required>
+                </div>
+                <div class="form-group">
+                    <label for="patient-age">Age</label>
+                    <input type="number" id="patient-age" class="form-control" placeholder="Enter age" required min="0" max="120">
+                </div>
+                <div class="form-group">
+                    <label for="patient-department">Department</label>
+                    <select id="patient-department" class="form-control" required>
+                        <option value="">Select Department</option>
+                        <option value="General Medicine">General Medicine</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Orthopedics">Orthopedics</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Surgery">Surgery</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="patient-priority">Priority Level</label>
+                    <select id="patient-priority" class="form-control" required>
+                        <option value="Low">Low (Routine Checkup)</option>
+                        <option value="Medium">Medium (Non-urgent)</option>
+                        <option value="High">High (Emergency)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-plus-circle"></i> Add to Queue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for the queue
+        let queueData = [
+            { id: "P1001", name: "Rajesh Kumar", department: "General Medicine", priority: "Medium", waitTime: "15 min", status: "Waiting" },
+            { id: "P1002", name: "Priya Sharma", department: "Pediatrics", priority: "High", waitTime: "5 min", status: "In Progress" },
+            { id: "P1003", name: "Amit Patel", department: "Cardiology", priority: "High", waitTime: "10 min", status: "Waiting" },
+            { id: "P1004", name: "Sunita Singh", department: "Orthopedics", priority: "Low", waitTime: "25 min", status: "Waiting" },
+            { id: "P1005", name: "Vikram Joshi", department: "Surgery", priority: "High", waitTime: "0 min", status: "Completed" },
+            { id: "P1006", name: "Meera Desai", department: "General Medicine", priority: "Medium", waitTime: "20 min", status: "Waiting" }
+        ];
+
+        // Resource data
+        let resources = {
+            doctors: 12,
+            totalDoctors: 18,
+            beds: 24,
+            totalBeds: 56,
+            queueCount: 18,
+            avgWaitTime: 42
+        };
+
+        // DOM Elements
+        const queueTableBody = document.getElementById('queue-table-body');
+        const queueCountEl = document.getElementById('queue-count');
+        const doctorsCountEl = document.getElementById('doctors-count');
+        const bedsCountEl = document.getElementById('beds-count');
+        const waitTimeEl = document.getElementById('wait-time');
+        const addPatientBtn = document.getElementById('add-patient-btn');
+        const nextPatientBtn = document.getElementById('next-patient-btn');
+        const updateResourcesBtn = document.getElementById('update-resources-btn');
+        const patientModal = document.getElementById('patient-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const patientForm = document.getElementById('patient-form');
+        const currentTimeEl = document.getElementById('current-time');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            renderQueueTable();
+            updateDashboard();
+            
+            // Update time every second
+            setInterval(updateTime, 1000);
+            
+            // Simulate real-time updates every 30 seconds
+            setInterval(updateResourcesRandomly, 30000);
+        });
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            currentTimeEl.innerHTML = `${dateString} | ${timeString}`;
+        }
+
+        // Render the queue table
+        function renderQueueTable() {
+            queueTableBody.innerHTML = '';
+            
+            queueData.forEach((patient, index) => {
+                const row = document.createElement('tr');
+                
+                // Determine priority class
+                let priorityClass = '';
+                if (patient.priority === 'High') priorityClass = 'priority-high';
+                else if (patient.priority === 'Medium') priorityClass = 'priority-medium';
+                else priorityClass = 'priority-low';
+                
+                // Determine status class
+                let statusClass = '';
+                let statusText = '';
+                if (patient.status === 'Waiting') {
+                    statusClass = 'status-waiting';
+                    statusText = 'Waiting';
+                } else if (patient.status === 'In Progress') {
+                    statusClass = 'status-in-progress';
+                    statusText = 'In Progress';
+                } else {
+                    statusClass = 'status-completed';
+                    statusText = 'Completed';
+                }
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="patient-id">${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.department}</td>
+                    <td class="${priorityClass}">${patient.priority}</td>
+                    <td>${patient.waitTime}</td>
+                    <td><span class="${statusClass}">${statusText}</span></td>
+                `;
+                
+                queueTableBody.appendChild(row);
+            });
+        }
+
+        // Update dashboard metrics
+        function updateDashboard() {
+            queueCountEl.textContent = resources.queueCount;
+            doctorsCountEl.textContent = `${resources.doctors}/${resources.totalDoctors}`;
+            bedsCountEl.textContent = `${resources.beds}/${resources.totalBeds}`;
+            waitTimeEl.textContent = `${resources.avgWaitTime}`;
+        }
+
+        // Add patient to queue
+        function addPatientToQueue(name, age, department, priority) {
+            const patientId = 'P' + (1000 + queueData.length + 1);
+            const waitTime = priority === 'High' ? '5 min' : priority === 'Medium' ? '15 min' : '30 min';
+            
+            const newPatient = {
+                id: patientId,
+                name: name,
+                department: department,
+                priority: priority,
+                waitTime: waitTime,
+                status: 'Waiting'
+            };
+            
+            // Add to beginning of queue for high priority, end for others
+            if (priority === 'High') {
+                queueData.unshift(newPatient);
+            } else {
+                queueData.push(newPatient);
+            }
+            
+            // Update queue count
+            resources.queueCount++;
+            
+            // Re-render table and update dashboard
+            renderQueueTable();
+            updateDashboard();
+            
+            // Show confirmation
+            alert(`Patient ${name} added to queue with ID: ${patientId}`);
+        }
+
+        // Process next patient in queue
+        function processNextPatient() {
+            if (queueData.length === 0) {
+                alert("No patients in the queue!");
+                return;
+            }
+            
+            // Find first waiting patient
+            const waitingIndex = queueData.findIndex(patient => patient.status === 'Waiting');
+            
+            if (waitingIndex === -1) {
+                alert("No patients currently waiting!");
+                return;
+            }
+            
+            // Update patient status
+            queueData[waitingIndex].status = 'In Progress';
+            queueData[waitingIndex].waitTime = '0 min';
+            
+            // Update queue count
+            resources.queueCount--;
+            
+            // Update doctors availability
+            if (resources.doctors > 0) {
+                resources.doctors--;
+            }
+            
+            // Re-render table and update dashboard
+            renderQueueTable();
+            updateDashboard();
+            
+            alert(`Now attending: ${queueData[waitingIndex].name} (${queueData[waitingIndex].id})`);
+        }
+
+        // Randomly update resources (simulating real-time changes)
+        function updateResourcesRandomly() {
+            // Randomly change doctor availability
+            const doctorChange = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+            resources.doctors = Math.max(3, Math.min(resources.totalDoctors, resources.doctors + doctorChange));
+            
+            // Randomly change bed availability
+            const bedChange = Math.floor(Math.random() * 5) - 2; // -2 to 2
+            resources.beds = Math.max(5, Math.min(resources.totalBeds, resources.beds + bedChange));
+            
+            // Randomly change queue count
+            const queueChange = Math.floor(Math.random() * 3) - 1;
+            resources.queueCount = Math.max(0, resources.queueCount + queueChange);
+            
+            // Randomly change average wait time
+            const waitChange = Math.floor(Math.random() * 5) - 2;
+            resources.avgWaitTime = Math.max(10, Math.min(90, resources.avgWaitTime + waitChange));
+            
+            // Update some patient statuses randomly
+            if (queueData.length > 0) {
+                const randomIndex = Math.floor(Math.random() * queueData.length);
+                if (queueData[randomIndex].status === 'In Progress') {
+                    queueData[randomIndex].status = 'Completed';
+                    
+                    // Free up a doctor
+                    if (resources.doctors < resources.totalDoctors) {
+                        resources.doctors++;
+                    }
+                } else if (queueData[randomIndex].status === 'Waiting' && Math.random() > 0.7) {
+                    queueData[randomIndex].status = 'In Progress';
+                    queueData[randomIndex].waitTime = '0 min';
+                    
+                    // Use a doctor
+                    if (resources.doctors > 0) {
+                        resources.doctors--;
+                    }
+                    
+                    // Reduce queue count
+                    resources.queueCount = Math.max(0, resources.queueCount - 1);
+                }
+            }
+            
+            // Update dashboard
+            updateDashboard();
+            
+            // Show notification for the update
+            console.log("Resources updated at: " + new Date().toLocaleTimeString());
+        }
+
+        // Manual resource update
+        function updateResourcesManually() {
+            // Free up some doctors
+            if (resources.doctors < resources.totalDoctors) {
+                resources.doctors = Math.min(resources.totalDoctors, resources.doctors + 2);
+            }
+            
+            // Free up some beds
+            if (resources.beds < resources.totalBeds) {
+                resources.beds = Math.min(resources.totalBeds, resources.beds + 3);
+            }
+            
+            // Reduce queue count slightly
+            resources.queueCount = Math.max(0, resources.queueCount - 2);
+            
+            // Reduce wait time
+            resources.avgWaitTime = Math.max(10, resources.avgWaitTime - 5);
+            
+            // Update dashboard
+            updateDashboard();
+            
+            alert("Resources updated! Doctors and beds availability increased.");
+        }
+
+        // Event Listeners
+        addPatientBtn.addEventListener('click', function() {
+            patientModal.style.display = 'flex';
+        });
+
+        closeModalBtn.addEventListener('click', function() {
+            patientModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === patientModal) {
+                patientModal.style.display = 'none';
+            }
+        });
+
+        nextPatientBtn.addEventListener('click', processNextPatient);
+
+        updateResourcesBtn.addEventListener('click', updateResourcesManually);
+
+        patientForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('patient-name').value;
+            const age = document.getElementById('patient-age').value;
+            const department = document.getElementById('patient-department').value;
+            const priority = document.getElementById('patient-priority').value;
+            
+            addPatientToQueue(name, age, department, priority);
+            
+            // Reset form and close modal
+            patientForm.reset();
+            patientModal.style.display = 'none';
+        });
+
+        // Initialize with more sample data
+        function initializeMoreData() {
+            // Add more sample patients
+            const samplePatients = [
+                { name: "Anjali Mehta", age: 28, department: "General Medicine", priority: "Medium" },
+                { name: "Rahul Verma", age: 45, department: "Cardiology", priority: "High" },
+                { name: "Kavita Nair", age: 32, department: "Pediatrics", priority: "Low" },
+                { name: "Sanjay Reddy", age: 60, department: "Orthopedics", priority: "Medium" }
+            ];
+            
+            // Add them after a short delay for demo
+            setTimeout(() => {
+                samplePatients.forEach(patient => {
+                    addPatientToQueue(patient.name, patient.age, patient.department, patient.priority);
+                });
+            }, 2000);
+        }
+
+        // Initialize with more data for demo
+        setTimeout(initializeMoreData, 1000);
+    </script>
+</body>
+</html>
